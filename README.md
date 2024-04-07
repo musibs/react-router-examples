@@ -1,70 +1,257 @@
-# Getting Started with Create React App
+# React Router Notes
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This section contains the notes taken for React Router App from Udemy Course
+Dive in and learn React.js from scratch! Learn React, Hooks, Redux, React Router, Next.js, Best Practices and way more! by Maximilian Schwarzmüller
 
-## Available Scripts
+## Install React Router DOM
 
-In the project directory, you can run:
+```js
+npm install react-router-dom
+```
 
-### `npm start`
+## Import createBrowserRouter in App.js file
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```js
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Create the Routes
 
-### `npm test`
+There are Two steps to create the routes:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Step 1:
 
-### `npm run build`
+```js
+const routes = createBrowserRouter([{ path: '/', element: <Home /> }]);
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+In the above code snippet, we are creating a new route for the '/' route and asking to render the Home component.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Home is a new component created inside the pages folder.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```js
+const Home = () => {
+  return <div>Home</div>;
+};
+export default Home;
+```
 
-### `npm run eject`
+Step 2:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Add the RouterProvider as below:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```js
+function App() {
+  return <RouterProvider router={routes} />;
+}
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Adding Multiple Routes
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```js
+const routes = createBrowserRouter([
+  { path: '/', element: <Home /> },
+  { path: '/products', element: <Products /> },
+]);
+```
 
-## Learn More
+## Alternative approach to create Routes:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Import createRoutesFromElements from react-router-dom
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```js
+import {
+  createBrowserRouter,
+  createRoutesFromElements,
+  Route,
+  RouterProvider,
+} from 'react-router-dom';
+```
 
-### Code Splitting
+Create Route Definitions:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```js
+const routeDefinitions = createRoutesFromElements(
+  <Route>
+    <Route path="/" element={<Home />}></Route>
+    <Route path="/products" element={<Products />}></Route>
+  </Route>
+);
+```
 
-### Analyzing the Bundle Size
+Create Browser Router using the routeDefinitions:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+```js
+const routes = createBrowserRouter(routeDefinitions);
+```
 
-### Making a Progressive Web App
+## Using Link to navigate across links
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+```js
+import { Link } from 'react-router-dom';
 
-### Advanced Configuration
+const Home = () => {
+  return (
+    <div>
+      <h1>Home Page</h1>
+      <Link to="/products">Product Page</Link>
+    </div>
+  );
+};
+export default Home;
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## Creating a Main Navigation Page
 
-### Deployment
+```js
+import { Link } from 'react-router-dom';
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+const MainNavigation = () => {
+  return (
+    <ul>
+      <li>
+        <Link to="/">Home</Link>
+      </li>
+      <li>
+        <Link to="/">Products</Link>
+      </li>
+    </ul>
+  );
+};
+export default MainNavigation;
+```
 
-### `npm run build` fails to minify
+## Using MainNavigation
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Step 1: Create a Root Layout:
+
+```js
+import { Outlet } from 'react-router-dom';
+
+import MainNavigation from '../components/MainNavigation';
+
+const Root = () => {
+  return (
+    <>
+      <MainNavigation />
+      <Outlet />
+    </>
+  );
+};
+export default Root;
+```
+
+Step 2: Update the child routes to Render inside Root Layout
+
+```js
+const routes = createBrowserRouter([
+  {
+    path: '/',
+    element: <Root />,
+    children: [
+      { path: '/', element: <Home /> },
+      { path: '/products', element: <Products /> },
+    ],
+  },
+]);
+```
+
+## Handling Errors with error page
+
+Step 1: Add an error page
+
+```js
+import MainNavigation from '../components/MainNavigation';
+
+const ErrorPage = () => {
+  return (
+    <>
+      <MainNavigation />
+      <h1>An Error Occurred</h1>
+    </>
+  );
+};
+export default ErrorPage;
+```
+
+Step 2: Update the route definitions with the `errorElement: <ErrorPage />`:
+
+```js
+const routes = createBrowserRouter([
+  {
+    path: '/',
+    errorElement: <ErrorPage />,
+    element: <Root />,
+    children: [
+      { path: '/', element: <Home /> },
+      { path: '/products', element: <Products /> },
+    ],
+  },
+]);
+```
+
+## Using NavLink to highlight the active links
+
+Replace the Link to NavLink and add the styles.
+
+```js
+<NavLink
+to="/"
+className={({isActive}) => isActive ? classes.active: undefined}
+end
+>Home</NavLink>
+
+<NavLink
+to="/products"
+className={({isActive}) => isActive ? classes.active: undefined}>Products</NavLink>
+```
+
+Note: See the use of end keyword with the / route
+
+## Programmatic Navigation using useNavigate() hook
+
+```js
+import { Link, useNavigate } from 'react-router-dom';
+
+const Home = () => {
+  const navigate = useNavigate();
+
+  function handleNavigate() {
+    navigate('/products');
+  }
+
+  return (
+    <div>
+      <h1>Home Page</h1>
+      <Link to="/products">Product Page</Link>
+      <p>
+        <button onClick={handleNavigate}>products</button>
+      </p>
+    </div>
+  );
+};
+export default Home;
+```
+
+## Displaying Individual Items
+
+Step1: Create the ProductDetailsPage
+
+```js
+import { useParams } from 'react-router-dom';
+
+const ProductDetails = () => {
+  const params = useParams();
+  return (
+    <div>
+      <h1>ProductDetails</h1>
+      <p>{params.productId}</p>
+    </div>
+  );
+};
+export default ProductDetails;
+```
+
+The `useParams()` hook provides access to the parameters.
+
+Step 2: Update the route definitions
