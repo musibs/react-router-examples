@@ -252,6 +252,23 @@ const ProductDetails = () => {
 export default ProductDetails;
 ```
 
-The `useParams()` hook provides access to the parameters.
+The `useParams()` hook provides access to the parameters. In this cae
 
 Step 2: Update the route definitions
+
+```js
+const routes = createBrowserRouter([
+  {
+    path: '/',
+    errorElement: <ErrorPage />,
+    element: <Root />,
+    children: [
+      { path: '/', element: <Home /> },
+      { path: '/products', element: <Products /> },
+      { path: '/products/:productId', element: <ProductDetailsPage /> },
+    ],
+  },
+]);
+```
+
+The parameter ```productId``` will be available through the useParams hook in the above snippet.
